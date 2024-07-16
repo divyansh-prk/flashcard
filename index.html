@@ -3,17 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Cropper</title>
+    <title>Image Cropper and Text Extractor</title>
     <style>
         canvas {
             border: 1px solid black;
             margin: 10px;
         }
     </style>
+    <script src='https://unpkg.com/tesseract.js@v2.1.0/dist/tesseract.min.js'></script>
 </head>
 <body>
+    <input type="file" id="imageUpload" accept="image/*">
     <canvas id="canvas" width="500" height="500"></canvas>
     <canvas id="croppedCanvas" width="200" height="200"></canvas>
+    <button id="extractText">Extract Text</button>
+    <div id="extractedText"></div>
     <script src="script.js"></script>
 </body>
 </html>

@@ -2,16 +2,29 @@ const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const croppedCanvas = document.getElementById('croppedCanvas');
 const croppedCtx = croppedCanvas.getContext('2d');
+const imageUpload = document.getElementById('imageUpload');
+const extractButton = document.getElementById('extractText');
+const extractedTextDiv = document.getElementById('extractedText');
 
 let img = new Image();
-img.src = 'https://img-cdn.pixlr.com/image-generator/history/65bb506dcb310754719cf81f/ede935de-1138-4f66-8ed7-44bd16efc709/medium.webp'; // Replace with your image URL
-
-img.onload = () => {
-    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-}
-
 let isDragging = false;
 let startX, startY, endX, endY;
+
+imageUpload.addEventListener('change', handleImage, false);
+extractButton.addEventListener('click', extractText);
+
+function handleImage(e) {
+    const reader = new FileReader();
+    reader.onload = function(event) {
+        img.onload = () => {
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        }
+        img.src = event.target.result;
+    }
+    reader.readAsDataURL(e.target.files[0]);
+}
 
 canvas.addEventListener('mousedown', (e) => {
     startX = e.offsetX;
@@ -52,4 +65,14 @@ function cropAndDisplay() {
         croppedCanvas.height = height;
         croppedCtx.drawImage(img, startX, startY, width, height, 0, 0, width, height);
     }
+}
+
+function extractText() {
+    Tesseract.recognize(
+        croppedCanvas,
+        'eng',
+        { logger: m => console.log(m) }
+    ).then(({ data: { text } }) => {
+        extractedTextDiv.textContent = text;
+    })
 }
